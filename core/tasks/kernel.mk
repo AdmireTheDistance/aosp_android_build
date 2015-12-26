@@ -21,9 +21,15 @@ TARGET_AUTO_KDIR := $(shell echo $(TARGET_DEVICE_DIR) | sed -e 's/^device/kernel
 TARGET_KERNEL_SOURCE ?= $(TARGET_AUTO_KDIR)
 KERNEL_SRC := $(TARGET_KERNEL_SOURCE)
 # kernel configuration - mandatory
+# I know VARIANT_DEFCONFIG and SELINUX_DEFCONFIG used to be here but 
+# honestly it would make more sense to just combine Samsungs different configs 
+# for for each device into just one config per device, for example
+# kernel/$(TARGET_ARCH)/configs/$(COMBINED_SELINUX_VARIANT_AND_DEVICE_CONFIG)
+# #nextbestthingisalreadyhere
+# #butnothere
+
+
 KERNEL_DEFCONFIG := $(TARGET_KERNEL_CONFIG)
-VARIANT_DEFCONFIG := $(TARGET_KERNEL_VARIANT_CONFIG)
-SELINUX_DEFCONFIG := $(TARGET_KERNEL_SELINUX_CONFIG)
 
 ## Internal variables
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
@@ -176,6 +182,13 @@ endif
 KERNEL_CROSS_COMPILE := CROSS_COMPILE="$(ccache) $(KERNEL_TOOLCHAIN_PATH)"
 ccache =
 
+define defconfig-mk
+	if [ ! -z "$(KERNEL_DEFCONFIG)" ]; then \
+		echo "making sure '$(TARGET_KERNEL_CONFIG)' is copied to '$(KERNEL_CONFIG)' "; \
+		cat $(KERNEL_SRC)/arch/$(KERNEL_ARCH)/configs/$(TARGET_KERNEL_CONFIG) >> $(KERNEL_OUT)/.config;
+    fi
+endef
+
 define mv-modules
     mdpath=`find $(KERNEL_MODULES_OUT) -type f -name modules.order`;\
     if [ "$$mdpath" != "" ];then\
@@ -204,9 +217,10 @@ endif
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 	mkdir -p $(KERNEL_MODULES_OUT)
+	$(defconfig-mk)
 
 $(KERNEL_CONFIG): $(KERNEL_OUT)
-	$(MAKE) $(MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) VARIANT_DEFCONFIG=$(VARIANT_DEFCONFIG) SELINUX_DEFCONFIG=$(SELINUX_DEFCONFIG) $(KERNEL_DEFCONFIG)
+	$(MAKE) $(MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_DEFCONFIG)
 	$(hide) if [ ! -z "$(KERNEL_CONFIG_OVERRIDE)" ]; then \
 			echo "Overriding kernel config with '$(KERNEL_CONFIG_OVERRIDE)'"; \
 			echo $(KERNEL_CONFIG_OVERRIDE) >> $(KERNEL_OUT)/.config; \
@@ -233,12 +247,12 @@ $(TARGET_PREBUILT_INT_KERNEL): $(TARGET_KERNEL_MODULES)
 $(KERNEL_HEADERS_INSTALL): $(KERNEL_OUT) $(KERNEL_CONFIG)
 	$(hide) if [ ! -z "$(KERNEL_HEADER_DEFCONFIG)" ]; then \
 			rm -f ../$(KERNEL_CONFIG); \
-			$(MAKE) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_HEADER_ARCH) $(KERNEL_CROSS_COMPILE) VARIANT_DEFCONFIG=$(VARIANT_DEFCONFIG) SELINUX_DEFCONFIG=$(SELINUX_DEFCONFIG) $(KERNEL_HEADER_DEFCONFIG); \
+			$(MAKE) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_HEADER_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_HEADER_DEFCONFIG); \
 			$(MAKE) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_HEADER_ARCH) $(KERNEL_CROSS_COMPILE) headers_install; fi
 	$(hide) if [ "$(KERNEL_HEADER_DEFCONFIG)" != "$(KERNEL_DEFCONFIG)" ]; then \
 			echo "Used a different defconfig for header generation"; \
 			rm -f ../$(KERNEL_CONFIG); \
-			$(MAKE) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) VARIANT_DEFCONFIG=$(VARIANT_DEFCONFIG) SELINUX_DEFCONFIG=$(SELINUX_DEFCONFIG) $(KERNEL_DEFCONFIG); fi
+			$(MAKE) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_DEFCONFIG); fi
 	$(hide) if [ ! -z "$(KERNEL_CONFIG_OVERRIDE)" ]; then \
 			echo "Overriding kernel config with '$(KERNEL_CONFIG_OVERRIDE)'"; \
 			echo $(KERNEL_CONFIG_OVERRIDE) >> $(KERNEL_OUT)/.config; \
