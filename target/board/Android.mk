@@ -3,6 +3,7 @@
 #
 
 -include $(TARGET_DEVICE_DIR)/AndroidBoard.mk
+-include $(TARGET_DEVICE_DIR)/BoardConfig.mk
 
 # Generate a file that contains various information about the
 # device we're building for.  This file is typically packaged up
