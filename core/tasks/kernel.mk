@@ -15,7 +15,7 @@
 # Android makefile to build kernel as a part of Android Build
 
 TARGET_AUTO_KDIR := $(shell echo $(TARGET_DEVICE_DIR) | sed -e 's/^device/kernel/g')
-
+PERL		= perl
 ## Externally influenced variables
 # kernel location - optional, defaults to kernel/<vendor>/<device>
 TARGET_KERNEL_SOURCE ?= $(TARGET_AUTO_KDIR)
@@ -28,10 +28,8 @@ KERNEL_SRC := $(TARGET_KERNEL_SOURCE)
 # #nextbestthingisalreadyhere
 # #butnothere
 
-
-KERNEL_DEFCONFIG := $(TARGET_KERNEL_CONFIG)
-
 ## Internal variables
+KERNEL_DEFCONFIG := $(TARGET_KERNEL_CONFIG)
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
 KERNEL_CONFIG := $(KERNEL_OUT)/.config
 
@@ -54,7 +52,16 @@ ifeq ($(KERNEL_HEADER_DEFCONFIG),)
 KERNEL_HEADER_DEFCONFIG := $(KERNEL_DEFCONFIG)
 endif
 
+# Force 32-bit binder IPC for 64bit kernel with 32bit userspace
+ifeq ($(KERNEL_ARCH),arm64)
+ifeq ($(TARGET_ARCH),arm)
+KERNEL_CONFIG_OVERRIDE := CONFIG_ANDROID_BINDER_IPC_32BIT=y
+endif
+endif
 
+ifeq ($(KERNEL_DEFCONFIG)$(wildcard $(KERNEL_CONFIG)),)
+$(error Kernel configuration not defined, cannot build kernel)
+else
 ifneq ($(BOARD_KERNEL_IMAGE_NAME),)
   TARGET_PREBUILT_INT_KERNEL_TYPE := $(BOARD_KERNEL_IMAGE_NAME)
 else
@@ -283,4 +290,5 @@ $(file) : $(KERNEL_BIN) | $(ACP)
 	$(transform-prebuilt-to-target)
 
 ALL_PREBUILT += $(INSTALLED_KERNEL_TARGET)
+endif
 endif
