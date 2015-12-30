@@ -192,8 +192,8 @@ ccache =
 define defconfig-mk
 	if [ ! -z "$(KERNEL_DEFCONFIG)" ]; then \
 		echo "making sure '$(TARGET_KERNEL_CONFIG)' is copied to '$(KERNEL_CONFIG)' "; \
-		cat $(KERNEL_SRC)/arch/$(KERNEL_ARCH)/configs/$(TARGET_KERNEL_CONFIG) >> $(KERNEL_OUT)/.config;
-    fi
+		cat $(KERNEL_SRC)/arch/$(KERNEL_ARCH)/configs/$(TARGET_KERNEL_CONFIG) >> $(KERNEL_OUT)/.config; done;\
+	fi
 endef
 
 define mv-modules
@@ -224,7 +224,7 @@ endif
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
 	mkdir -p $(KERNEL_MODULES_OUT)
-	$(defconfig-mk)
+#	$(defconfig-mk)
 
 $(KERNEL_CONFIG): $(KERNEL_OUT)
 	$(MAKE) $(MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_DEFCONFIG)

@@ -278,10 +278,10 @@ ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
 $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
-	$(hide) echo ro.vendor.build.date=`date`>>$@
-	$(hide) echo ro.vendor.build.date.utc=`date +%s`>>$@
-	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT)">>$@
+#	$(hide) echo > $@
+#	$(hide) echo ro.vendor.build.date=`date`>>$@
+#	$(hide) echo ro.vendor.build.date.utc=`date +%s`>>$@
+#	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT)">>$@
 endif
 
 # ----------------------------------------------------------------
