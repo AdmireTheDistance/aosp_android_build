@@ -483,8 +483,6 @@ function print_lunch_menu()
     echo "You're building on" $uname
     if [ "$(uname)" = "Darwin" ] ; then
        echo "  (ohai, iSheep!!)"
-    else
-       echo "  (ohai, CheekyBastards!!)"
     fi
     echo
     if [ "z${CUSTOM_DEVICES_ONLY}" != "z" ]; then
@@ -505,7 +503,7 @@ function print_lunch_menu()
 
     if [ "z${CUSTOM_DEVICES_ONLY}" != "z" ]; then
        echo " "
-       echo "... dont worry we'll make bacon toghether!!"
+       echo "... Mmmmmm....Bacon...."
     fi
 
     echo
