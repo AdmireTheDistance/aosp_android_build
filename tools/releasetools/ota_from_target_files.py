@@ -137,7 +137,7 @@ OPTIONS.full_radio = False
 OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
 OPTIONS.cache_size = None
-OPTIONS.backuptool = False
+OPTIONS.backuptool = True
 OPTIONS.stash_threshold = 0.8
 
 def MostPopularKey(d, default):
@@ -600,7 +600,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   #script.Print("Target: %s" % CalculateFingerprint(
   #    oem_props, oem_dict, OPTIONS.info_dict))
   script.Print("******************************")
-  script.Print("** non-enforcing Pure NeXus **")
+  script.Print("********** ALLIANCE **********")
   script.Print("******************************")
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
@@ -613,6 +613,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   if OPTIONS.backuptool:
     script.Mount("/system")
+    script.Print("Running backup tool...")
     script.RunBackup("backup")
     script.Unmount("/system")
 
@@ -691,16 +692,17 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.ShowProgress(0.02, 10)
     if block_based:
       script.Mount("/system")
+      script.Print("Restoring system...")
     script.RunBackup("restore")
     if block_based:
       script.Unmount("/system")
 
-#  if block_based:
-#    script.Print(" ")
-#    script.Print("Flashing SuperSU..")
-#    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
-#                   ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
-#    script.FlashSuperSU()
+  if block_based:
+    script.Print(" ")
+    script.Print("Flashing SuperSU..")
+    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+                   ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
+    script.FlashSuperSU()
   script.Print(" ")
   script.Print("Flashing Kernel..")
   script.ShowProgress(0.05, 5)

@@ -359,7 +359,7 @@ ifeq (true,$(strip $(enable_target_debugging)))
   INCLUDE_TEST_OTA_KEYS := true
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
 endif # !enable_target_debugging
 
 ## eng ##
@@ -1001,13 +1001,6 @@ target-native : native-target
 target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
-
-# To catch more build breakage, check build tests modules in eng and userdebug builds.
-ifneq ($(TARGET_BUILD_PDK),true)
-ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
-droidcore : target-tests host-tests
-endif
-endif
 
 .PHONY: lintall
 
