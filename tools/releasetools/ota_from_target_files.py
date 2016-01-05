@@ -599,9 +599,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # Dump fingerprints
   #script.Print("Target: %s" % CalculateFingerprint(
   #    oem_props, oem_dict, OPTIONS.info_dict))
-  script.Print("******************************")
-  script.Print("********** ALLIANCE **********")
-  script.Print("******************************")
+  script.Print("    _    _     _     ___    _    _   _  ____ _____ ")
+  script.Print("   / \  | |   | |   |_ _|  / \  | \ | |/ ___| ____|")
+  script.Print("  / _ \ | |   | |    | |  / _ \ |  \| | |   |  _|  ")
+  script.Print(" / ___ \| |___| |___ | | / ___ \| |\  | |___| |___ ")
+  script.Print("/_/   \_\_____|_____|___/_/   \_\_| \_|\____|_____|")
+  script.Print("-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-")
+  script.Print("-+-|i|n|f|i|n|i|t|e| |p|o|s|s|i|b|i|l|i|t|i|e|s|-+-")
+  script.Print("-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-")
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
@@ -699,7 +704,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   if block_based:
     script.Print(" ")
-    script.Print("Flashing SuperSU..")
+    script.Print("Installing SuperSU...")
     common.ZipWriteStr(output_zip, "supersu/supersu.zip",
                    ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
     script.FlashSuperSU()
@@ -1634,7 +1639,7 @@ def main(argv):
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
-  print "unzipping target target-files..."
+  print "extracting target target-files..."
   OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
 
   OPTIONS.target_tmp = OPTIONS.input_tmp
@@ -1697,7 +1702,7 @@ def main(argv):
       break
 
     else:
-      print "unzipping source target-files..."
+      print "extracting source target-files..."
       OPTIONS.source_tmp, source_zip = common.UnzipTemp(
           OPTIONS.incremental_source)
       OPTIONS.target_info_dict = OPTIONS.info_dict

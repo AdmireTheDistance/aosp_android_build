@@ -315,7 +315,7 @@ enable_target_debugging := true
 WITH_DEXPREOPT := false
 tags_to_install :=
 ifneq (,$(user_variant))
-  # Target is secure in user builds.
+  # Target is insecure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
 
   ifeq ($(user_variant),userdebug)
@@ -338,8 +338,8 @@ ifneq (,$(user_variant))
     endif
   endif
 
-  # Disallow mock locations by default for user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+  # Allow mock locations by default for user builds
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
 
 else # !user_variant
   # Turn on checkjni for non-user builds.
